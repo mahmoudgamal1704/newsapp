@@ -15,6 +15,7 @@ class HomeLayout extends StatefulWidget {
 
 class _HomeLayoutState extends State<HomeLayout> {
   bool search = false;
+  TextEditingController SearchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +35,10 @@ class _HomeLayoutState extends State<HomeLayout> {
                       padding: const EdgeInsets.only(right: 20),
                       child: IconButton(
                         onPressed: () {
-                          search = true;
-                          setState(() {});
+                          if (categoryData != null) {
+                            search = true;
+                            setState(() {});
+                          }
                         },
                         icon: Icon(
                           Icons.search,
@@ -57,9 +60,9 @@ class _HomeLayoutState extends State<HomeLayout> {
             centerTitle: true,
             title: search
                 ? TextFormField(
-
+                    controller: SearchController,
                     decoration: InputDecoration(
-                        hintText:'Enter ur words' ,
+                        hintText: 'Enter ur words',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
@@ -73,9 +76,15 @@ class _HomeLayoutState extends State<HomeLayout> {
                           },
                         ),
                         prefixIconColor: Colors.black,
-                        suffixIcon: Icon(Icons.search, size: 28)),
-                    style: TextStyle(height: .3),
+                        suffixIcon: IconButton(
+                          onPressed: () {
 
+                          },
+                          icon: Icon(Icons.search, size: 28),
+                        )
+
+                    ),
+                    style: TextStyle(height: .3),
                   )
                 : Text(
                     '${categoryData == null ? "News App" : categoryData!.name}')),
