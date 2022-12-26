@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
       routes: {
         HomeLayout.RouteName:(context) => HomeLayout(),
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }
