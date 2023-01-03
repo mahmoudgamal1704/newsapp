@@ -4,7 +4,9 @@ import 'package:newsapp/screens/newsitem.dart';
 import 'package:newsapp/screens/tabitem.dart';
 import 'package:newsapp/shared/items/constants.dart';
 import 'package:newsapp/shared/network/remote/apimanager.dart';
+import 'package:provider/provider.dart';
 
+import '../models/providers/mainprovider.dart';
 import '../models/source_response.dart';
 
 class TabControllerScreen extends StatefulWidget {
@@ -23,6 +25,7 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var prov = Provider.of<MainProvider>(context);
     return Column(
       children: [
         DefaultTabController(
@@ -43,8 +46,8 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
             )),
         FutureBuilder<NewsResponse>(
           future: widget.sources.isNotEmpty
-              ? ApiManage.getNews(widget.sources[selectedindex].id ?? "",widget.q)
-              : ApiManage.getNews("",""),
+              ? ApiManage.getNews(widget.sources[selectedindex].id ?? "",widget.q,prov.CurrentLangcode)
+              : ApiManage.getNews("","",prov.CurrentLangcode),
           builder: (context, snapshot) {
             CheckAPIdata(snapshot);
             var news = snapshot.data?.articles ?? [];

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:newsapp/models/categorydata.dart';
 import 'package:newsapp/screens/catigoryitem.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class CatigoriesScreen extends StatelessWidget {
   // const CatigoriesScreen({Key? key}) : super(key: key);
   Function onCategorySelected;
@@ -16,7 +16,7 @@ class CatigoriesScreen extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Pick Your Category of Interest :',
+            '${AppLocalizations.of(context)!.categtitle} :',
             style: TextStyle(color: Color.fromRGBO(79, 90, 105, 1.0)),
           ),
           SizedBox(height: 15,),

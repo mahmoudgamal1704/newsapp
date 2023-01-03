@@ -1,0 +1,10 @@
+{
+    "apptitle": "NewsApp",
+    "en" : "English",
+    "ar" : "Arabic",
+    "langtitle" : "Languages",
+    "categtitle" : "Pick Your Category of Interest",
+    "categs":"Categories",
+    "settingtitle": "Settings"
+
+}

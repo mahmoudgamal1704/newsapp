@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CategoryData {
-
-
   String name;
   String id;
   Color BGcolor;

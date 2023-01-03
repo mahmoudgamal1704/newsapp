@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class DrawerWidget extends StatelessWidget {
   // const DrawerWidget({Key? key}) : super(key: key);
   Function goToCategories ;
@@ -18,18 +18,22 @@ class DrawerWidget extends StatelessWidget {
               width: double.infinity,
                 padding: EdgeInsets.all(60),
                 color: Colors.green,
-                child: Text('News App',style: TextStyle(fontSize: 25,color: Colors.white),)),
+                child: Text(AppLocalizations.of(context)!.apptitle,style: TextStyle(fontSize: 25,color: Colors.white),)),
             Padding(
               padding: const EdgeInsets.all(16),
               child: InkWell(
                   onTap: () {
                       goToCategories(Categoiresnum);
                   },
-                  child: Text('Categories',style: TextStyle(fontSize: 18,color: Colors.black),)),
+                  child: Text(AppLocalizations.of(context)!.categs,style: TextStyle(fontSize: 18,color: Colors.black),)),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Text('Settings',style: TextStyle(fontSize: 18,color: Colors.black),),
+              child: InkWell(
+                  onTap: () {
+                    goToCategories(Settingnum);
+                  },
+                  child: Text(AppLocalizations.of(context)!.settingtitle,style: TextStyle(fontSize: 18,color: Colors.black),)),
             ),
           ],
         ),

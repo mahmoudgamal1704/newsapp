@@ -8,20 +8,20 @@ import 'package:newsapp/shared/items/constants.dart';
 
 class ApiManage {
 
- static  Future<SourceResponse> getSources(String category) async {
-      Uri URL = Uri.https(BASE,SourcesEndPoint,{"apiKey" : APIKEY,"category":category});
+ static  Future<SourceResponse> getSources(String category,String langcode) async {
+      Uri URL = Uri.https(BASE,SourcesEndPoint,{"apiKey" : APIKEY,"category":category,"language":langcode});
      Response response = await http.get(URL);
      var json = jsonDecode(response.body);
       SourceResponse SourcesResp = SourceResponse.fromJson(json);
       return SourcesResp;
    }
 
-   static Future<NewsResponse> getNews(String sourceID,String? q)  async {
+   static Future<NewsResponse> getNews(String sourceID,String? q,String langcode)  async {
      Uri URL;
      if (q ==null) {
-       URL = Uri.https(BASE,NewsEndPoint,{"apiKey" : APIKEY , "sources":sourceID});
+       URL = Uri.https(BASE,NewsEndPoint,{"apiKey" : APIKEY , "sources":sourceID,"language":langcode});
      } else {
-       URL = Uri.https(BASE,NewsEndPoint,{"apiKey" : APIKEY , "q":q});
+       URL = Uri.https(BASE,NewsEndPoint,{"apiKey" : APIKEY , "q":q,"language":langcode});
      }
 
         Response newsresponse =await http.get(URL);

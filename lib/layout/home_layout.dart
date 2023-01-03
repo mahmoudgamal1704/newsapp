@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:newsapp/models/categorydata.dart';
 import 'package:newsapp/screens/catgoriesscreen.dart';
 import 'package:newsapp/screens/drawer.dart';
-
+import 'package:newsapp/screens/settingscreen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../screens/homescreen.dart';
 
 class HomeLayout extends StatefulWidget {
@@ -15,6 +16,7 @@ class HomeLayout extends StatefulWidget {
 
 class _HomeLayoutState extends State<HomeLayout> {
   bool search = false;
+  bool setting = false;
   TextEditingController SearchController = TextEditingController();
 
   @override
@@ -28,7 +30,7 @@ class _HomeLayoutState extends State<HomeLayout> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-            actions: search
+            actions: (setting || search)
                 ? []
                 : [
                     Padding(
@@ -74,6 +76,7 @@ class _HomeLayoutState extends State<HomeLayout> {
                           onPressed: () {
                             search = false;
                             widget.q = null;
+                            SearchController.clear();
                             setState(() {});
                           },
                         ),
@@ -92,11 +95,11 @@ class _HomeLayoutState extends State<HomeLayout> {
                     style: TextStyle(height: .3),
                   )
                 : Text(
-                    '${categoryData == null ? "News App" : categoryData!.name}')),
+                    '${setting ? AppLocalizations.of(context)!.settingtitle : categoryData == null ? AppLocalizations.of(context)!.apptitle : categoryData!.name}')),
         // drawerEnableOpenDragGesture: true,
 
         drawer: DrawerWidget(onDrawerSelected),
-        body: categoryData == null
+        body: setting ? SettingScreen():categoryData == null
             ? CatigoriesScreen(onCategorySelected)
             : HomeScreen(categoryData?.id ?? "",widget.q),
       ),
@@ -107,9 +110,13 @@ class _HomeLayoutState extends State<HomeLayout> {
 
   // void goToCategories(){
   void onDrawerSelected(number) {
+    search = false;
     if (number == DrawerWidget.Categoiresnum) {
       categoryData = null;
-    } else if (number == DrawerWidget.Settingnum) {}
+      setting=false;
+    } else if (number == DrawerWidget.Settingnum) {
+      setting = true;
+    }
     setState(() {
       Navigator.pop(context);
     });
