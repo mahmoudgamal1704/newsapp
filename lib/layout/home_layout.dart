@@ -8,7 +8,7 @@ import '../screens/homescreen.dart';
 class HomeLayout extends StatefulWidget {
   // const HomeLayout({Key? key}) : super(key: key);
   static String RouteName = 'Home';
-
+  String? q;
   @override
   State<HomeLayout> createState() => _HomeLayoutState();
 }
@@ -60,6 +60,7 @@ class _HomeLayoutState extends State<HomeLayout> {
             centerTitle: true,
             title: search
                 ? TextFormField(
+
                     controller: SearchController,
                     decoration: InputDecoration(
                         hintText: 'Enter ur words',
@@ -72,13 +73,17 @@ class _HomeLayoutState extends State<HomeLayout> {
                           icon: Icon(Icons.close),
                           onPressed: () {
                             search = false;
+                            widget.q = null;
                             setState(() {});
                           },
                         ),
                         prefixIconColor: Colors.black,
                         suffixIcon: IconButton(
                           onPressed: () {
+                              widget.q= SearchController.text;
+                              setState(() {
 
+                              });
                           },
                           icon: Icon(Icons.search, size: 28),
                         )
@@ -93,7 +98,7 @@ class _HomeLayoutState extends State<HomeLayout> {
         drawer: DrawerWidget(onDrawerSelected),
         body: categoryData == null
             ? CatigoriesScreen(onCategorySelected)
-            : HomeScreen(categoryData?.id ?? ""),
+            : HomeScreen(categoryData?.id ?? "",widget.q),
       ),
     );
   }

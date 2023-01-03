@@ -11,8 +11,8 @@ class TabControllerScreen extends StatefulWidget {
   // const TabControllerScreen({Key? key}) : super(key: key);
   List<Sources> sources;
 
-
-  TabControllerScreen(this.sources);
+String? q;
+  TabControllerScreen(this.sources,this.q);
 
   @override
   State<TabControllerScreen> createState() => _TabControllerScreenState();
@@ -43,8 +43,8 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
             )),
         FutureBuilder<NewsResponse>(
           future: widget.sources.isNotEmpty
-              ? ApiManage.getNews(widget.sources[selectedindex].id ?? "")
-              : ApiManage.getNews(""),
+              ? ApiManage.getNews(widget.sources[selectedindex].id ?? "",widget.q)
+              : ApiManage.getNews("",""),
           builder: (context, snapshot) {
             CheckAPIdata(snapshot);
             var news = snapshot.data?.articles ?? [];

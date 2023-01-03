@@ -9,8 +9,8 @@ class HomeScreen extends StatelessWidget {
   // const HomeScreen({Key? key}) : super(key: key);
   String CategoryID;
 
-
-  HomeScreen(this.CategoryID);
+  String? q;
+  HomeScreen(this.CategoryID,this.q);
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +19,7 @@ class HomeScreen extends StatelessWidget {
       builder: (context, snapshot) {
         CheckAPIdata(snapshot);
         var sources = snapshot.data?.sources ?? [];
-        print ('${sources.length} lll');
-        return TabControllerScreen(sources);
+        return TabControllerScreen(sources,q);
       },
     );
   }
