@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:newsapp/layout/New_layout.dart';
 import 'package:newsapp/layout/home_layout.dart';
 import 'package:newsapp/shared/items/constants.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       initialRoute: HomeLayout.RouteName,
       routes: {
         HomeLayout.RouteName:(context) => HomeLayout(),
+        NewLayout.RouteName:(context) => NewLayout(),
       },
       debugShowCheckedModeBanner: false,
     );
