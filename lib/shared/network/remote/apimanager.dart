@@ -16,12 +16,12 @@ class ApiManage {
       return SourcesResp;
    }
 
-   static Future<NewsResponse> getNews(String sourceID,String? q,String langcode)  async {
+   static Future<NewsResponse> getNews(String sourceID,String? q,String langcode,{String page = "1"})  async {
      Uri URL;
      if (q ==null) {
-       URL = Uri.https(BASE,NewsEndPoint,{"apiKey" : APIKEY , "sources":sourceID,"language":langcode});
+       URL = Uri.https(BASE,NewsEndPoint,{"apiKey" : APIKEY , "sources":sourceID,"language":langcode,"page":page});
      } else {
-       URL = Uri.https(BASE,NewsEndPoint,{"apiKey" : APIKEY , "q":q,"language":langcode});
+       URL = Uri.https(BASE,NewsEndPoint,{"apiKey" : APIKEY , "q":q,"language":langcode,"page":page});
      }
 
         Response newsresponse =await http.get(URL);

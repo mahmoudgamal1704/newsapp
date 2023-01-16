@@ -5,6 +5,7 @@ import 'package:newsapp/screens/tabitem.dart';
 import 'package:newsapp/shared/items/constants.dart';
 import 'package:newsapp/shared/network/remote/apimanager.dart';
 import 'package:provider/provider.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../models/providers/mainprovider.dart';
 import '../models/source_response.dart';
@@ -13,8 +14,9 @@ class TabControllerScreen extends StatefulWidget {
   // const TabControllerScreen({Key? key}) : super(key: key);
   List<Sources> sources;
 
-String? q;
-  TabControllerScreen(this.sources,this.q);
+  String? q;
+  String lancode;
+  TabControllerScreen(this.sources, this.q,this.lancode);
 
   @override
   State<TabControllerScreen> createState() => _TabControllerScreenState();
@@ -22,6 +24,44 @@ String? q;
 
 class _TabControllerScreenState extends State<TabControllerScreen> {
   int selectedindex = 0;
+  List news = [];
+  int lastPage = 5; // as more than need to pay
+  int curentpage = 1;
+  bool lastnews = false;
+  final controller = ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    controller.addListener(() {
+      if (controller.position.maxScrollExtent == controller.offset) {
+        fetch();
+      }
+    });
+    super.initState();
+  }
+
+  Future fetch() async {
+    if (curentpage < lastPage) {
+      curentpage++;
+    }
+    NewsResponse newsresp = await ApiManage.getNews(
+        widget.sources[selectedindex].id ?? "", widget.q, widget.lancode,
+        page: curentpage.toString());
+      if(newsresp.articles!.isEmpty || curentpage == lastPage){
+        lastnews= true;
+      }
+    setState(() {
+      news = (news + newsresp.articles!);
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +73,8 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
             child: TabBar(
               onTap: (value) {
                 selectedindex = value;
+                news.clear();
+                curentpage = 1;
                 setState(() {});
               },
               indicatorColor: Colors.transparent,
@@ -46,16 +88,38 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
             )),
         FutureBuilder<NewsResponse>(
           future: widget.sources.isNotEmpty
-              ? ApiManage.getNews(widget.sources[selectedindex].id ?? "",widget.q,prov.CurrentLangcode)
-              : ApiManage.getNews("","",prov.CurrentLangcode),
+              ? ApiManage.getNews(widget.sources[selectedindex].id ?? "",
+                  widget.q, prov.CurrentLangcode)
+              : ApiManage.getNews("", "", prov.CurrentLangcode),
           builder: (context, snapshot) {
             CheckAPIdata(snapshot);
-            var news = snapshot.data?.articles ?? [];
+            if (news.isEmpty) {
+              news = snapshot.data?.articles ?? [];
+            }
+
             return Expanded(
               child: ListView.builder(
-                itemCount: news.length,
+                controller: controller,
+                itemCount: news.length + 1,
                 itemBuilder: (context, index) {
-                  return NewsItem(news[index]);
+                  if (index < news.length) {
+                    return NewsItem(news[index]);
+                  } else {
+                    if(lastnews){
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text("No More News"),
+                        ),
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
                 },
               ),
             );

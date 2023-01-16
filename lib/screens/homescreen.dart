@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
       builder: (context, snapshot) {
         CheckAPIdata(snapshot);
         var sources = snapshot.data?.sources ?? [];
-        return TabControllerScreen(sources,q);
+        return TabControllerScreen(sources,q,prov.CurrentLangcode);
       },
     );
   }

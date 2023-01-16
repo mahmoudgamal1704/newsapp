@@ -3,15 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:newsapp/models/news_response.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class NewScreen extends StatelessWidget {
+class NewScreen extends StatefulWidget {
   // const NewScreen({Key? key}) : super(key: key);
   Articles article;
 
   NewScreen(this.article);
 
   @override
+  State<NewScreen> createState() => _NewScreenState();
+}
+
+class _NewScreenState extends State<NewScreen> {
+
+  @override
   Widget build(BuildContext context) {
-    final Uri url = Uri.parse(article.url ?? "");
+    final Uri url = Uri.parse(widget.article.url ?? "");
     Future llaunchUrl() async {
       if (!await launchUrl(url)) {
         throw 'Could not launch $url';
@@ -34,7 +40,7 @@ class NewScreen extends StatelessWidget {
               )),
           centerTitle: true,
           title: Text(
-            article.title ?? "",
+            widget.article.title ?? "",
             maxLines: 5,
             overflow: TextOverflow.ellipsis,
           ),
@@ -54,32 +60,31 @@ class NewScreen extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: CachedNetworkImage(
-                imageUrl: article.urlToImage ?? "",
+                imageUrl: widget.article.urlToImage ?? "",
                 fit: BoxFit.fill,
                 height: 180,
                 placeholder: (context, url) => CircularProgressIndicator(),
                 errorWidget: (context, url, error) => Icon(Icons.error),
               ),
             ),
-            // Image.network(article.urlToImage??"",height: 180,width: double.infinity,)),
             Text(
-              '${article.author}',
+              '${widget.article.author}',
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
             Text(
-              '${article.title}',
+              '${widget.article.title}',
               style: TextStyle(
                   fontSize: 16,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
             ),
             Text(
-              '${article.publishedAt?.substring(0, 10)}',
+              '${widget.article.publishedAt?.substring(0, 10)}',
               style: TextStyle(fontSize: 14, color: Colors.grey),
               textAlign: TextAlign.right,
             ),
             Text(
-              '${article.content}',
+              '${widget.article.content}',
               style: TextStyle(fontSize: 16, color: Colors.black),
             ),
             TextButton(onPressed: llaunchUrl, child: Text("view article"))
@@ -88,5 +93,4 @@ class NewScreen extends StatelessWidget {
       ),
     );
   }
-
 }
