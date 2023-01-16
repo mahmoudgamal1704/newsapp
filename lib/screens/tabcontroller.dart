@@ -16,7 +16,8 @@ class TabControllerScreen extends StatefulWidget {
 
   String? q;
   String lancode;
-  TabControllerScreen(this.sources, this.q,this.lancode);
+
+  TabControllerScreen(this.sources, this.q, this.lancode);
 
   @override
   State<TabControllerScreen> createState() => _TabControllerScreenState();
@@ -28,11 +29,13 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
   int lastPage = 5; // as more than need to pay
   int curentpage = 1;
   bool lastnews = false;
+  bool tabChanged = false;
   final controller = ScrollController();
 
   @override
   void initState() {
     // TODO: implement initState
+    tabChanged = true;
     controller.addListener(() {
       if (controller.position.maxScrollExtent == controller.offset) {
         fetch();
@@ -48,9 +51,9 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
     NewsResponse newsresp = await ApiManage.getNews(
         widget.sources[selectedindex].id ?? "", widget.q, widget.lancode,
         page: curentpage.toString());
-      if(newsresp.articles!.isEmpty || curentpage == lastPage){
-        lastnews= true;
-      }
+    if (newsresp.articles!.isEmpty || curentpage == lastPage) {
+      lastnews = true;
+    }
     setState(() {
       news = (news + newsresp.articles!);
     });
@@ -73,7 +76,7 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
             child: TabBar(
               onTap: (value) {
                 selectedindex = value;
-                news.clear();
+                tabChanged = true;
                 curentpage = 1;
                 setState(() {});
               },
@@ -93,10 +96,12 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
               : ApiManage.getNews("", "", prov.CurrentLangcode),
           builder: (context, snapshot) {
             CheckAPIdata(snapshot);
-            if (news.isEmpty) {
+            if (tabChanged) {
               news = snapshot.data?.articles ?? [];
+              if (news.length > 0) {
+                tabChanged = false;
+              }
             }
-
             return Expanded(
               child: ListView.builder(
                 controller: controller,
@@ -105,7 +110,7 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
                   if (index < news.length) {
                     return NewsItem(news[index]);
                   } else {
-                    if(lastnews){
+                    if (lastnews) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Center(
