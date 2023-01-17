@@ -29,19 +29,28 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
   int lastPage = 5; // as more than need to pay
   int curentpage = 1;
   bool lastnews = false;
-  bool tabChanged = false;
   final controller = ScrollController();
+  bool addnews = false;
 
   @override
   void initState() {
     // TODO: implement initState
-    tabChanged = true;
     controller.addListener(() {
       if (controller.position.maxScrollExtent == controller.offset) {
         fetch();
       }
     });
     super.initState();
+  }
+
+  Future<NewsResponse> getNews(String langcode) {
+    if (widget.sources.isNotEmpty) {
+
+      return ApiManage.getNews(
+          widget.sources[selectedindex].id ?? "", widget.q, langcode);
+    } else {
+      return ApiManage.getNews("", "", langcode);
+    }
   }
 
   Future fetch() async {
@@ -54,6 +63,7 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
     if (newsresp.articles!.isEmpty || curentpage == lastPage) {
       lastnews = true;
     }
+    addnews = true;
     setState(() {
       news = (news + newsresp.articles!);
     });
@@ -69,14 +79,14 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
   @override
   Widget build(BuildContext context) {
     var prov = Provider.of<MainProvider>(context);
-    return Column(
-      children: [
-        DefaultTabController(
-            length: widget.sources.length,
-            child: TabBar(
+    return DefaultTabController(
+        length: widget.sources.length,
+        child: Column(
+          children: [
+            TabBar(
               onTap: (value) {
                 selectedindex = value;
-                tabChanged = true;
+                addnews = false;
                 curentpage = 1;
                 setState(() {});
               },
@@ -88,49 +98,44 @@ class _TabControllerScreenState extends State<TabControllerScreen> {
                             widget.sources.indexOf(source) == selectedindex),
                       ))
                   .toList(),
-            )),
-        FutureBuilder<NewsResponse>(
-          future: widget.sources.isNotEmpty
-              ? ApiManage.getNews(widget.sources[selectedindex].id ?? "",
-                  widget.q, prov.CurrentLangcode)
-              : ApiManage.getNews("", "", prov.CurrentLangcode),
-          builder: (context, snapshot) {
-            CheckAPIdata(snapshot);
-            if (tabChanged) {
-              news = snapshot.data?.articles ?? [];
-              if (news.length > 0) {
-                tabChanged = false;
-              }
-            }
-            return Expanded(
-              child: ListView.builder(
-                controller: controller,
-                itemCount: news.length + 1,
-                itemBuilder: (context, index) {
-                  if (index < news.length) {
-                    return NewsItem(news[index]);
-                  } else {
-                    if (lastnews) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Text("No More News"),
-                        ),
-                      );
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                },
-              ),
-            );
-          },
-        )
-      ],
-    );
+            ),
+            FutureBuilder<NewsResponse>(
+              future: getNews(prov.CurrentLangcode),
+              builder: (context, snapshot) {
+                CheckAPIdata(snapshot);
+                // error was here as function was prevent news to load again in news variable
+                if (!addnews) {
+                  news = snapshot.data?.articles ?? [];
+                }
+                return Expanded(
+                  child: ListView.builder(
+                    controller: controller,
+                    itemCount: news.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index < news.length) {
+                        return NewsItem(news[index]);
+                      } else {
+                        if (lastnews) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text("No More News"),
+                            ),
+                          );
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                );
+              },
+            )
+          ],
+        ));
   }
 }
